@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, email, password, adminSecret } = body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !adminSecret) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -29,6 +29,13 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const isAdmin = adminSecret === process.env.ADMIN_SECRET;
+
+    if(!isAdmin){
+      return NextResponse.json(
+        { error: "Invalid admin secret" },
+        { status: 400 }
+      );
+    }
 
     const user = await User.create({
       name,

@@ -2,8 +2,12 @@
 
 2) Got an error when I tried adding products , although product was added successfully, bt try to resolve it. The Error :  Received NaN for the `value` attribute. If this is expected, cast the value to a string.
 
-3) delete images from r2
+3) delete images from r2 ❌
 
-4) offer price and offer %
+4) offer price and offer % ❌
 
-5) search bar using name
+5) search bar using name ❌
+
+6) do the shiprocket stuff
+
+7) Stock for each size

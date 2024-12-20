@@ -1,8 +1,12 @@
 'use client'
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+
 export default function RegisterPage() {
+
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,6 +28,7 @@ export default function RegisterPage() {
     const data = await res.json();
     if (res.ok) {
       alert(data.message);
+      router.push("/login");
     } else {
       alert(data.error);
     }

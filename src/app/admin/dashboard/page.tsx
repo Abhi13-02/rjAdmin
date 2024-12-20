@@ -7,11 +7,8 @@ const AdminDashboard = () => {
 
   return (
     <div className="dashboard">
-      <Sidebar />
       <div className="content">
-        {pathname === "/admin/dashboard" && (
-          <h1>Welcome to Admin Dashboard</h1>
-        )}
+        <h1>Welcome dear admin</h1>
       </div>
     </div>
   );

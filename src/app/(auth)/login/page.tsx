@@ -1,8 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+
 export default function LoginPage() {
+
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,6 +27,7 @@ export default function LoginPage() {
     if (res.ok) {
       alert(data.message);
       // Redirect to dashboard or save session
+      router.push("/admin/dashboard");
     } else {
       alert(data.error);
     }
