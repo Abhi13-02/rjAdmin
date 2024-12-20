@@ -12,6 +12,7 @@ interface Product {
   colors: string[];
   stock: number;
   price: number;
+  discountedPrice?: number;
 }
 
 const ProductsPage = () => {
@@ -90,6 +91,7 @@ const ProductsPage = () => {
               <th className="px-4 py-3">Colors</th>
               <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">Discounted Price</th>
               <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
@@ -117,6 +119,7 @@ const ProductsPage = () => {
                 <td className="px-4 py-3">{product.colors.join(", ")}</td>
                 <td className="px-4 py-3">{product.stock}</td>
                 <td className="px-4 py-3">${product.price.toFixed(2)}</td>
+                <td className="px-4 py-3">${product.discountedPrice?.toFixed(2)}</td>
                 <td className="px-4 py-3 flex space-x-2">
                   <Link
                     href={`/admin/dashboard/products/${product._id}`}
