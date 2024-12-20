@@ -2,30 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
   const protectedRoutes = ["/admin/dashboard"];
+  const restrictRoutes = ["/login", "/register"];
   const isProtected = protectedRoutes.some((route) =>
     req.nextUrl.pathname.startsWith(route)
   );
+  const isRestricted = restrictRoutes.some((route) =>
+    req.nextUrl.pathname.startsWith(route)
+  );
   console.log("isProtected", isProtected);
+
+  const sessionCookie = req.cookies.get("session");
   
-
-  if (isProtected) {
-    const sessionCookie = req.cookies.get("session");
-    
-
-    if (!sessionCookie || !sessionCookie.value) {
-      return NextResponse.redirect(new URL("/login", req.url));
+  if(isRestricted){
+    if(sessionCookie && sessionCookie.value) {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url)); 
     }
-    // else{
-    //   return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-    // }
+  }
 
-    try {
-      const session = JSON.parse(sessionCookie.value); // Access `value` property of the cookie      
-      if (!session.isAdmin) {
-        return NextResponse.redirect(new URL("/login", req.url));
-      }
-    } catch (error) {
-      console.error("Invalid session cookie:", error);
+  if (isProtected) {    
+    if (!sessionCookie || !sessionCookie.value) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
