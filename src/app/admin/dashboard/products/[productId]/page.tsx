@@ -12,6 +12,7 @@ interface Product {
   colors: string[];
   stock: number;
   price: number;
+  discountedPrice?: number; 
 }
 
 const ProductDetailPage = () => {
@@ -247,6 +248,16 @@ const ProductDetailPage = () => {
                 type="number"
                 value={product.price}
                 onChange={(e) => setProduct({ ...product, price: parseFloat(e.target.value) })}
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-medium text-gray-700">Discounted Price</label>
+              <input
+                type="number"
+                value={product.discountedPrice}
+                onChange={(e) => setProduct({ ...product, discountedPrice: parseFloat(e.target.value) })}
                 className="w-full p-2 border rounded-md"
               />
             </div>
