@@ -16,6 +16,7 @@ interface Product {
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -38,7 +39,9 @@ const ProductsPage = () => {
 
         if (response.ok) {
           alert("Product deleted successfully");
-          setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productId));
+          setProducts((prevProducts) =>
+            prevProducts.filter((product) => product._id !== productId)
+          );
         } else {
           alert("Failed to delete the product. Please try again.");
         }
@@ -49,8 +52,13 @@ const ProductsPage = () => {
     }
   };
 
+  // Filter products based on search query
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-6">
+    <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Products</h1>
         <Link href="/admin/dashboard/products/add">
@@ -59,6 +67,18 @@ const ProductsPage = () => {
           </button>
         </Link>
       </div>
+
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by product name..."
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <table className="table-auto w-full text-sm">
           <thead>
@@ -74,7 +94,7 @@ const ProductsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <tr
                 key={product._id}
                 className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200"
@@ -115,9 +135,9 @@ const ProductsPage = () => {
             ))}
           </tbody>
         </table>
-        {products.length === 0 && (
+        {filteredProducts.length === 0 && (
           <div className="text-center text-gray-500 dark:text-gray-400 mt-6">
-            No products found. Start by adding a new product.
+            No products found. Try searching for a different product.
           </div>
         )}
       </div>

@@ -78,7 +78,7 @@ const OrdersPage = () => {
       <h1 className="text-2xl font-bold mb-4">All Orders</h1>
 
       {/* Tabs */}
-      <div className="tabs mb-4">
+      <div className="tabs mb-4 w-full flex justify-around gap-2 items-center">
         {STATUS_OPTIONS.map((status) => (
           <button
             key={status}
@@ -93,8 +93,10 @@ const OrdersPage = () => {
       </div>
 
       {/* Orders List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredOrders.length > 0 ? (
-        filteredOrders.map((order) => (
+        
+        filteredOrders.map((order: Order) => (
           <div key={order._id} className="border p-4 mb-4 rounded-lg shadow">
             <h3 className="font-bold text-lg">Order ID: {order._id}</h3>
             <p>Status: {order.status}</p>
@@ -138,6 +140,7 @@ const OrdersPage = () => {
       ) : (
         <p>No orders with status: {activeTab}</p>
       )}
+      </div>  
     </div>
   );
 };

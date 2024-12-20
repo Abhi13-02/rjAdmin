@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Sidebar from "@/components/SideBar";
 
 // Define types for User
 interface User {
@@ -14,7 +13,9 @@ interface User {
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
+  // Fetch users from the API
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await fetch("/api/users/getAllUsers");
@@ -25,10 +26,26 @@ const UsersPage = () => {
     fetchUsers();
   }, []);
 
+  // Filtered users based on search query
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen w-full bg-gray-100">
       <div className="flex-1 p-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Users</h1>
+
+        {/* Search Bar */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
         {/* Table */}
         <div className="overflow-x-auto bg-white rounded-lg shadow-md">
@@ -42,7 +59,7 @@ const UsersPage = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <tr
                   key={user.userId}
                   className="hover:bg-gray-50 transition-all duration-200"
@@ -57,6 +74,16 @@ const UsersPage = () => {
                   </td>
                 </tr>
               ))}
+              {filteredUsers.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="text-center text-gray-500 px-6 py-4 border-t"
+                  >
+                    No users found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
