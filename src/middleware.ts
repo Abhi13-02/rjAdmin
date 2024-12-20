@@ -15,6 +15,9 @@ export function middleware(req: NextRequest) {
     if (!sessionCookie || !sessionCookie.value) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
+    // else{
+    //   return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    // }
 
     try {
       const session = JSON.parse(sessionCookie.value); // Access `value` property of the cookie      

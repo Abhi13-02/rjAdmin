@@ -1,3 +1,5 @@
 1) in the add product page and update product page probably I have not  included the category option , but we have to include it , please take care of that . Also there may be other properties in the schema which i have not included , so please give it a recheck.
 
 2) Got an error when I tried adding products , although product was added successfully, bt try to resolve it. The Error :  Received NaN for the `value` attribute. If this is expected, cast the value to a string.
+
+3) delete images from r2

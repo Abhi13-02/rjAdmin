@@ -3,8 +3,6 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
- // Import AdminLayout for consistent layout
-
 interface Product {
   title: string;
   description: string;
@@ -17,7 +15,7 @@ interface Product {
 }
 
 const ProductDetailPage = () => {
-  const {productId} = useParams();
+  const { productId } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [newTag, setNewTag] = useState<string>("");
   const [newSize, setNewSize] = useState<string>("");
@@ -35,10 +33,10 @@ const ProductDetailPage = () => {
     }
   }, [productId]);
 
+  
   const handleUpdateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
-  
-    // Send the PUT request to update the product
+
     const response = await fetch(`/api/products/${productId}`, {
       method: "PUT",
       headers: {
@@ -46,15 +44,13 @@ const ProductDetailPage = () => {
       },
       body: JSON.stringify(product),
     });
-  
+
     if (response.ok) {
       alert("Product updated successfully");
-      // router.push("/admin/dashboard/products"); 
     } else {
       alert("Failed to update the product. Please try again.");
     }
   };
-  
 
   const addTag = () => {
     if (newTag && !product?.tags.includes(newTag)) {
@@ -62,8 +58,15 @@ const ProductDetailPage = () => {
         ...prevProduct!,
         tags: [...prevProduct!.tags, newTag],
       }));
-      setNewTag(""); // Reset the input
+      setNewTag("");
     }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct!,
+      tags: prevProduct!.tags.filter((tag) => tag !== tagToRemove),
+    }));
   };
 
   const addSize = () => {
@@ -72,8 +75,15 @@ const ProductDetailPage = () => {
         ...prevProduct!,
         sizes: [...prevProduct!.sizes, newSize],
       }));
-      setNewSize(""); // Reset the input
+      setNewSize("");
     }
+  };
+
+  const removeSize = (sizeToRemove: string) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct!,
+      sizes: prevProduct!.sizes.filter((size) => size !== sizeToRemove),
+    }));
   };
 
   const addColor = () => {
@@ -82,25 +92,20 @@ const ProductDetailPage = () => {
         ...prevProduct!,
         colors: [...prevProduct!.colors, newColor],
       }));
-      setNewColor(""); // Reset the input
+      setNewColor("");
     }
   };
 
-  const handleTagKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter") {
-      addTag();
-    }
+  const removeColor = (colorToRemove: string) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct!,
+      colors: prevProduct!.colors.filter((color) => color !== colorToRemove),
+    }));
   };
 
-  const handleSizeKeyPress = (event: React.KeyboardEvent) => {
+  const handleKeyPress = (event: React.KeyboardEvent, addFunction: () => void) => {
     if (event.key === "Enter") {
-      addSize();
-    }
-  };
-
-  const handleColorKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter") {
-      addColor();
+      addFunction();
     }
   };
 
@@ -130,33 +135,22 @@ const ProductDetailPage = () => {
               />
             </div>
 
-            <div className="mb-4 ">
-              <label className="block font-medium text-gray-700">Images</label>
-              <input
-                type="file"
-                multiple
-                onChange={(e) =>
-                  setProduct({
-                    ...product,
-                    images: Array.from(e.target.files || []).map((file) => URL.createObjectURL(file)),
-                  })
-                }
-                className="w-full p-2 border rounded-md"
-              />
-              <div className="mt-2 flex gap-2">
-                {product.images.map((image, index) => (
-                  <img key={index} src={image} alt={`Product Image ${index}`} className="w-16 h-16 object-cover rounded" />
-                ))}
-              </div>
-            </div>
-
-            {/* Tags */}
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Tags</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {product.tags.map((tag, index) => (
-                  <span key={index} className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full">
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                  >
                     {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="text-red-500"
+                    >
+                      &times;
+                    </button>
                   </span>
                 ))}
               </div>
@@ -164,7 +158,7 @@ const ProductDetailPage = () => {
                 type="text"
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={handleTagKeyPress}
+                onKeyDown={(e) => handleKeyPress(e, addTag)}
                 placeholder="Add tag"
                 className="w-full p-2 border rounded-md"
               />
@@ -173,13 +167,22 @@ const ProductDetailPage = () => {
               </button>
             </div>
 
-            {/* Size Options */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Size Options</label>
+              <label className="block font-medium text-gray-700">Sizes</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {product.sizes.map((size, index) => (
-                  <span key={index} className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full">
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                  >
                     {size}
+                    <button
+                      type="button"
+                      onClick={() => removeSize(size)}
+                      className="text-red-500"
+                    >
+                      &times;
+                    </button>
                   </span>
                 ))}
               </div>
@@ -187,7 +190,7 @@ const ProductDetailPage = () => {
                 type="text"
                 value={newSize}
                 onChange={(e) => setNewSize(e.target.value)}
-                onKeyDown={handleSizeKeyPress}
+                onKeyDown={(e) => handleKeyPress(e, addSize)}
                 placeholder="Add size"
                 className="w-full p-2 border rounded-md"
               />
@@ -196,13 +199,22 @@ const ProductDetailPage = () => {
               </button>
             </div>
 
-            {/* Color Options */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Color Options</label>
+              <label className="block font-medium text-gray-700">Colors</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {product.colors.map((color, index) => (
-                  <span key={index} className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full">
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                  >
                     {color}
+                    <button
+                      type="button"
+                      onClick={() => removeColor(color)}
+                      className="text-red-500"
+                    >
+                      &times;
+                    </button>
                   </span>
                 ))}
               </div>
@@ -210,7 +222,7 @@ const ProductDetailPage = () => {
                 type="text"
                 value={newColor}
                 onChange={(e) => setNewColor(e.target.value)}
-                onKeyDown={handleColorKeyPress}
+                onKeyDown={(e) => handleKeyPress(e, addColor)}
                 placeholder="Add color"
                 className="w-full p-2 border rounded-md"
               />
