@@ -30,7 +30,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center gap-5">
       <h1>Register</h1>
       <input
         type="text"
@@ -38,6 +38,7 @@ export default function RegisterPage() {
         placeholder="Name"
         value={formData.name}
         onChange={handleChange}
+        className="w-96"
       />
       <input
         type="email"
@@ -45,6 +46,7 @@ export default function RegisterPage() {
         placeholder="Email"
         value={formData.email}
         onChange={handleChange}
+        className="w-96"
       />
       <input
         type="password"
@@ -52,6 +54,7 @@ export default function RegisterPage() {
         placeholder="Password"
         value={formData.password}
         onChange={handleChange}
+        className="w-96 text-black"
       />
       <input
         type="text"
@@ -59,8 +62,9 @@ export default function RegisterPage() {
         placeholder="Admin Secret (optional)"
         value={formData.adminSecret}
         onChange={handleChange}
+        className="w-96"
       />
-      <button onClick={handleRegister}>Register</button>
+      <button className="bg-blue-500 px-4 py-2 rounded" onClick={handleRegister}>Register</button>
     </div>
   );
 }

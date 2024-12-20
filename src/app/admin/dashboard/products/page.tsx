@@ -27,57 +27,99 @@ const ProductsPage = () => {
     fetchProducts();
   }, []);
 
+  const handleDelete = async (productId: string) => {
+    const confirmed = confirm("Are you sure you want to delete this product?");
+
+    if (confirmed) {
+      try {
+        const response = await fetch(`/api/products/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          alert("Product deleted successfully");
+          setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productId));
+        } else {
+          alert("Failed to delete the product. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("An error occurred while deleting the product.");
+      }
+    }
+  };
+
   return (
-    <div>
-      <button className="bg-green-300 px-2 py-1 rounded-md fixed right-2"><Link href="/admin/dashboard/products/add">Add Product</Link></button>
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-semibold mb-4">Products</h1>
-        <table className="table w-full text-gray-700">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Products</h1>
+        <Link href="/admin/dashboard/products/add">
+          <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md shadow-md">
+            Add Product
+          </button>
+        </Link>
+      </div>
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <table className="table-auto w-full text-sm">
           <thead>
-            <tr className="text-left border-b">
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Images</th>
-              <th className="px-4 py-2">Tags</th>
-              <th className="px-4 py-2">Size</th>
-              <th className="px-4 py-2">Color</th>
-              <th className="px-4 py-2">Stock</th>
-              <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Actions</th>
+            <tr className="text-left border-b border-gray-300 dark:border-gray-700">
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Images</th>
+              <th className="px-4 py-3">Tags</th>
+              <th className="px-4 py-3">Sizes</th>
+              <th className="px-4 py-3">Colors</th>
+              <th className="px-4 py-3">Stock</th>
+              <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product) => (
-              <tr key={product._id} className="border-b hover:bg-gray-100">
-                <td className="px-4 py-2">{product.title}</td>
-                <td className="px-4 py-2">
-                  <div className="flex space-x-2">
+              <tr
+                key={product._id}
+                className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200"
+              >
+                <td className="px-4 py-3 font-medium">{product.title}</td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-wrap gap-2">
                     {product.images.map((image, index) => (
                       <img
                         key={index}
                         src={image}
                         alt={`${product.title} image ${index}`}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-16 h-16 object-cover rounded-md border border-gray-300 dark:border-gray-700"
                       />
                     ))}
                   </div>
                 </td>
-                <td className="px-4 py-2">{product.tags.join(", ")}</td>
-                <td className="px-4 py-2">{product.sizes.join(", ")}</td>
-                <td className="px-4 py-2">{product.colors.join(", ")}</td>
-                <td className="px-4 py-2">{product.stock}</td>
-                <td className="px-4 py-2">${product.price}</td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-3">{product.tags.join(", ")}</td>
+                <td className="px-4 py-3">{product.sizes.join(", ")}</td>
+                <td className="px-4 py-3">{product.colors.join(", ")}</td>
+                <td className="px-4 py-3">{product.stock}</td>
+                <td className="px-4 py-3">${product.price.toFixed(2)}</td>
+                <td className="px-4 py-3 flex space-x-2">
                   <Link
                     href={`/admin/dashboard/products/${product._id}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-400"
                   >
                     Edit
                   </Link>
+                  <button
+                    onClick={() => handleDelete(product._id)}
+                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {products.length === 0 && (
+          <div className="text-center text-gray-500 dark:text-gray-400 mt-6">
+            No products found. Start by adding a new product.
+          </div>
+        )}
       </div>
     </div>
   );
