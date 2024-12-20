@@ -12,6 +12,7 @@ interface Product {
   colors: string[];
   stock: number;
   price: number;
+  discountedPrice?: number; 
 }
 
 const AddProductPage = () => {
@@ -25,6 +26,7 @@ const AddProductPage = () => {
     colors: [],
     stock: 0,
     price: 0,
+    discountedPrice: 0
   });
   const [newTag, setNewTag] = useState<string>("");
   const [newSize, setNewSize] = useState<string>("");
@@ -355,6 +357,21 @@ const AddProductPage = () => {
               value={product.price}
               onChange={(e) =>
                 setProduct({ ...product, price: parseInt(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          {/*Discounted Price */}
+          <div className="mb-4">
+            <label className="block font-medium text-gray-700">
+              Discount Price
+            </label>
+            <input
+              type="number"
+              value={product.discountedPrice}
+              onChange={(e) =>
+                setProduct({ ...product, discountedPrice: parseInt(e.target.value) })
               }
               className="w-full p-2 border rounded-md"
             />
