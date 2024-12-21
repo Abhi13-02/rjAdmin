@@ -6,21 +6,24 @@ import React, { useEffect, useState } from "react";
 interface Product {
   title: string;
   description: string;
+  category: string;
   images: string[];
   tags: string[];
   sizes: string[];
   colors: string[];
   stock: number;
   price: number;
-  discountedPrice?: number; 
+  discountedPrice?: number;
 }
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
-  const [newTag, setNewTag] = useState<string>("");
-  const [newSize, setNewSize] = useState<string>("");
-  const [newColor, setNewColor] = useState<string>("");
+
+  const categories = ["Saree", "Kurti", "Shirt", "Salwar"];
+  const tagOptions = ["New Arrival", "Best Seller", "Trending", "Discounted"];
+  const sizeOptions = ["XS", "S", "M", "L", "XL"];
+  const colorOptions = ["Red", "Blue", "Green", "Black", "White"];
 
   useEffect(() => {
     if (productId) {
@@ -34,7 +37,6 @@ const ProductDetailPage = () => {
     }
   }, [productId]);
 
-  
   const handleUpdateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -53,61 +55,23 @@ const ProductDetailPage = () => {
     }
   };
 
-  const addTag = () => {
-    if (newTag && !product?.tags.includes(newTag)) {
-      setProduct((prevProduct) => ({
-        ...prevProduct!,
-        tags: [...prevProduct!.tags, newTag],
-      }));
-      setNewTag("");
-    }
-  };
 
   const removeTag = (tagToRemove: string) => {
-    setProduct((prevProduct) => ({
-      ...prevProduct!,
-      tags: prevProduct!.tags.filter((tag) => tag !== tagToRemove),
-    }));
-  };
-
-  const addSize = () => {
-    if (newSize && !product?.sizes.includes(newSize)) {
-      setProduct((prevProduct) => ({
-        ...prevProduct!,
-        sizes: [...prevProduct!.sizes, newSize],
-      }));
-      setNewSize("");
-    }
+    setProduct((prevProduct) =>
+      prevProduct ? { ...prevProduct, tags: prevProduct.tags.filter((tag) => tag !== tagToRemove) } : null
+    );
   };
 
   const removeSize = (sizeToRemove: string) => {
-    setProduct((prevProduct) => ({
-      ...prevProduct!,
-      sizes: prevProduct!.sizes.filter((size) => size !== sizeToRemove),
-    }));
-  };
-
-  const addColor = () => {
-    if (newColor && !product?.colors.includes(newColor)) {
-      setProduct((prevProduct) => ({
-        ...prevProduct!,
-        colors: [...prevProduct!.colors, newColor],
-      }));
-      setNewColor("");
-    }
+    setProduct((prevProduct) =>
+      prevProduct ? { ...prevProduct, sizes: prevProduct.sizes.filter((size) => size !== sizeToRemove) } : null
+    );
   };
 
   const removeColor = (colorToRemove: string) => {
-    setProduct((prevProduct) => ({
-      ...prevProduct!,
-      colors: prevProduct!.colors.filter((color) => color !== colorToRemove),
-    }));
-  };
-
-  const handleKeyPress = (event: React.KeyboardEvent, addFunction: () => void) => {
-    if (event.key === "Enter") {
-      addFunction();
-    }
+    setProduct((prevProduct) =>
+      prevProduct ? { ...prevProduct, colors: prevProduct.colors.filter((color) => color !== colorToRemove) } : null
+    );
   };
 
   return (
@@ -116,6 +80,7 @@ const ProductDetailPage = () => {
         <div className="p-6 bg-white rounded-lg shadow-md">
           <h1 className="text-2xl font-semibold mb-4">Edit Product</h1>
           <form onSubmit={handleUpdateProduct}>
+            {/* Product Name */}
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Product Name</label>
               <input
@@ -126,6 +91,7 @@ const ProductDetailPage = () => {
               />
             </div>
 
+            {/* Product Description */}
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Product Description</label>
               <input
@@ -136,9 +102,46 @@ const ProductDetailPage = () => {
               />
             </div>
 
+            {/* Product Category */}
+            <div className="mb-4">
+              <label className="block font-medium text-gray-700">Product Category</label>
+              <select
+                value={product.category}
+                onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Select Category</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Tags */}
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Tags</label>
-              <div className="flex flex-wrap gap-2 mb-2">
+              <select
+                value=""
+                onChange={(e) => {
+                  const newTag = e.target.value;
+                  if (newTag && !product.tags.includes(newTag)) {
+                    setProduct((prev) =>
+                      prev ? { ...prev, tags: [...prev.tags, newTag] } : null
+                    );
+                  }
+                }}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Select Tag</option>
+                {tagOptions.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </select>
+              <div className="flex flex-wrap gap-2 mt-2">
                 {product.tags.map((tag, index) => (
                   <span
                     key={index}
@@ -155,22 +158,30 @@ const ProductDetailPage = () => {
                   </span>
                 ))}
               </div>
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={(e) => handleKeyPress(e, addTag)}
-                placeholder="Add tag"
-                className="w-full p-2 border rounded-md"
-              />
-              <button type="button" onClick={addTag} className="mt-2 bg-blue-600 text-white p-2 rounded-md">
-                Add Tag
-              </button>
             </div>
 
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Sizes</label>
-              <div className="flex flex-wrap gap-2 mb-2">
+              <select
+                value=""
+                onChange={(e) => {
+                  const newSize = e.target.value;
+                  if (newSize && !product.sizes.includes(newSize)) {
+                    setProduct((prev) =>
+                      prev ? { ...prev, sizes: [...prev.sizes, newSize] } : null
+                    );
+                  }
+                }}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Select size</option>
+                {sizeOptions.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+              <div className="flex flex-wrap gap-2 mt-2">
                 {product.sizes.map((size, index) => (
                   <span
                     key={index}
@@ -187,22 +198,30 @@ const ProductDetailPage = () => {
                   </span>
                 ))}
               </div>
-              <input
-                type="text"
-                value={newSize}
-                onChange={(e) => setNewSize(e.target.value)}
-                onKeyDown={(e) => handleKeyPress(e, addSize)}
-                placeholder="Add size"
-                className="w-full p-2 border rounded-md"
-              />
-              <button type="button" onClick={addSize} className="mt-2 bg-blue-600 text-white p-2 rounded-md">
-                Add Size
-              </button>
             </div>
 
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Colors</label>
-              <div className="flex flex-wrap gap-2 mb-2">
+              <select
+                value=""
+                onChange={(e) => {
+                  const newColor = e.target.value;
+                  if (newColor && !product.colors.includes(newColor)) {
+                    setProduct((prev) =>
+                      prev ? { ...prev, colors: [...prev.colors, newColor] } : null
+                    );
+                  }
+                }}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Select color</option>
+                {colorOptions.map((color) => (
+                  <option key={color} value={color}>
+                    {color}
+                  </option>
+                ))}
+              </select>
+              <div className="flex flex-wrap gap-2 mt-2">
                 {product.colors.map((color, index) => (
                   <span
                     key={index}
@@ -219,56 +238,63 @@ const ProductDetailPage = () => {
                   </span>
                 ))}
               </div>
-              <input
-                type="text"
-                value={newColor}
-                onChange={(e) => setNewColor(e.target.value)}
-                onKeyDown={(e) => handleKeyPress(e, addColor)}
-                placeholder="Add color"
-                className="w-full p-2 border rounded-md"
-              />
-              <button type="button" onClick={addColor} className="mt-2 bg-blue-600 text-white p-2 rounded-md">
-                Add Color
-              </button>
             </div>
 
-            <div className="mb-4">
-              <label className="block font-medium text-gray-700">Stock</label>
-              <input
-                type="number"
-                value={product.stock}
-                onChange={(e) => setProduct({ ...product, stock: parseInt(e.target.value) })}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
+                      {/* Stock */}
+          <div className="mb-4">
+            <label className="block font-medium text-gray-700">
+              Product Stock
+            </label>
+            <input
+              type="number"
+              value={product.stock}
+              onChange={(e) =>
+                setProduct({ ...product, stock: parseInt(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
 
-            <div className="mb-4">
-              <label className="block font-medium text-gray-700">Price</label>
-              <input
-                type="number"
-                value={product.price}
-                onChange={(e) => setProduct({ ...product, price: parseFloat(e.target.value) })}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
+          {/* Price */}
+          <div className="mb-4">
+            <label className="block font-medium text-gray-700">
+              Product Price
+            </label>
+            <input
+              type="number"
+              value={product.price}
+              onChange={(e) =>
+                setProduct({ ...product, price: parseInt(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
 
-            <div className="mb-4">
-              <label className="block font-medium text-gray-700">Discounted Price</label>
-              <input
-                type="number"
-                value={product.discountedPrice}
-                onChange={(e) => setProduct({ ...product, discountedPrice: parseFloat(e.target.value) })}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
+          {/*Discounted Price */}
+          <div className="mb-4">
+            <label className="block font-medium text-gray-700">
+              Discount Price
+            </label>
+            <input
+              type="number"
+              value={product.discountedPrice}
+              onChange={(e) =>
+                setProduct({ ...product, discountedPrice: parseInt(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
 
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">
+            <button
+              type="submit"
+              className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md"
+            >
               Update Product
             </button>
           </form>
         </div>
       ) : (
-        <p>Loading product...</p>
+        <p>Loading product details...</p>
       )}
     </div>
   );

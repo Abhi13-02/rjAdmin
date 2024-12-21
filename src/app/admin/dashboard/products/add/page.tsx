@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 
@@ -12,7 +12,7 @@ interface Product {
   colors: string[];
   stock: number;
   price: number;
-  discountedPrice?: number; 
+  discountedPrice?: number;
 }
 
 const AddProductPage = () => {
@@ -26,7 +26,7 @@ const AddProductPage = () => {
     colors: [],
     stock: 0,
     price: 0,
-    discountedPrice: 0
+    discountedPrice: 0,
   });
   const [newTag, setNewTag] = useState<string>("");
   const [newSize, setNewSize] = useState<string>("");
@@ -34,6 +34,11 @@ const AddProductPage = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
+
+  const categories = ["Saree", "Kurti", "Shirt", "Salwar"];
+  const tagOptions = ["New Arrival", "Best Seller", "Trending", "Discounted"];
+  const sizeOptions = ["XS", "S", "M", "L", "XL"];
+  const colorOptions = ["Red", "Blue", "Green", "Black", "White"];
 
   const handleAddProduct = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -112,13 +117,6 @@ const AddProductPage = () => {
     }
   };
 
-  const addTag = () => {
-    if (newTag && !product.tags.includes(newTag)) {
-      setProduct((prev) => ({ ...prev, tags: [...prev.tags, newTag] }));
-      setNewTag("");
-    }
-  };
-
   const removeTag = (tag: string) => {
     setProduct((prev) => ({
       ...prev,
@@ -126,25 +124,11 @@ const AddProductPage = () => {
     }));
   };
 
-  const addSize = () => {
-    if (newSize && !product.sizes.includes(newSize)) {
-      setProduct((prev) => ({ ...prev, sizes: [...prev.sizes, newSize] }));
-      setNewSize("");
-    }
-  };
-
   const removeSize = (size: string) => {
     setProduct((prev) => ({
       ...prev,
       sizes: prev.sizes.filter((s) => s !== size),
     }));
-  };
-
-  const addColor = () => {
-    if (newColor && !product.colors.includes(newColor)) {
-      setProduct((prev) => ({ ...prev, colors: [...prev.colors, newColor] }));
-      setNewColor("");
-    }
   };
 
   const removeColor = (color: string) => {
@@ -224,10 +208,52 @@ const AddProductPage = () => {
             </div>
           </div>
 
+          {/* Product Category */}
+          <div className="mb-4">
+            <label className="block font-medium text-gray-700">
+              Product Category
+            </label>
+            <select
+              value={product.category}
+              onChange={(e) =>
+                setProduct({ ...product, category: e.target.value })
+              }
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Category</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Tags */}
           <div className="mb-4">
             <label className="block font-medium text-gray-700">Tags</label>
-            <div className="flex flex-wrap gap-2 mb-2">
+            <select
+              value=""
+              onChange={(e) => {
+                const newTag = e.target.value;
+                if (newTag && !product.tags.includes(newTag)) {
+                  setProduct((prev) => ({
+                    ...prev,
+                    tags: [...prev.tags, newTag],
+                  }));
+                }
+              }}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Tag</option>
+              {tagOptions.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex flex-wrap gap-2 mt-2">
               {product.tags.map((tag, index) => (
                 <span
                   key={index}
@@ -244,26 +270,32 @@ const AddProductPage = () => {
                 </span>
               ))}
             </div>
-            <input
-              type="text"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              placeholder="Add tag"
-              className="w-full p-2 border rounded-md"
-            />
-            <button
-              type="button"
-              onClick={addTag}
-              className="mt-2 bg-blue-600 text-white p-2 rounded-md"
-            >
-              Add Tag
-            </button>
           </div>
 
-          {/* Sizes */}
           <div className="mb-4">
             <label className="block font-medium text-gray-700">Sizes</label>
-            <div className="flex flex-wrap gap-2 mb-2">
+            <select
+              value=""
+              onChange={(e) => {
+                const newSize = e.target.value;
+                if (newSize && !product.sizes.includes(newSize)) {
+                  setProduct((prev) => ({
+                    ...prev,
+                    sizes: [...prev.sizes, newSize],
+                  }));
+                }
+              }}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Size</option>
+              {sizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex flex-wrap gap-2 mt-2">
               {product.sizes.map((size, index) => (
                 <span
                   key={index}
@@ -280,26 +312,32 @@ const AddProductPage = () => {
                 </span>
               ))}
             </div>
-            <input
-              type="text"
-              value={newSize}
-              onChange={(e) => setNewSize(e.target.value)}
-              placeholder="Add Size"
-              className="w-full p-2 border rounded-md"
-            />
-            <button
-              type="button"
-              onClick={addSize}
-              className="mt-2 bg-blue-600 text-white p-2 rounded-md"
-            >
-              Add Size
-            </button>
           </div>
 
-          {/* Colors */}
           <div className="mb-4">
             <label className="block font-medium text-gray-700">Colors</label>
-            <div className="flex flex-wrap gap-2 mb-2">
+            <select
+              value=""
+              onChange={(e) => {
+                const newColor = e.target.value;
+                if (newColor && !product.colors.includes(newColor)) {
+                  setProduct((prev) => ({
+                    ...prev,
+                    colors: [...prev.colors, newColor],
+                  }));
+                }
+              }}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Color</option>
+              {colorOptions.map((color) => (
+                <option key={color} value={color}>
+                  {color}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex flex-wrap gap-2 mt-2">
               {product.colors.map((color, index) => (
                 <span
                   key={index}
@@ -316,20 +354,6 @@ const AddProductPage = () => {
                 </span>
               ))}
             </div>
-            <input
-              type="text"
-              value={newColor}
-              onChange={(e) => setNewColor(e.target.value)}
-              placeholder="Add Color"
-              className="w-full p-2 border rounded-md"
-            />
-            <button
-              type="button"
-              onClick={addColor}
-              className="mt-2 bg-blue-600 text-white p-2 rounded-md"
-            >
-              Add Color
-            </button>
           </div>
 
           {/* Stock */}
@@ -371,7 +395,10 @@ const AddProductPage = () => {
               type="number"
               value={product.discountedPrice}
               onChange={(e) =>
-                setProduct({ ...product, discountedPrice: parseInt(e.target.value) })
+                setProduct({
+                  ...product,
+                  discountedPrice: parseInt(e.target.value),
+                })
               }
               className="w-full p-2 border rounded-md"
             />
