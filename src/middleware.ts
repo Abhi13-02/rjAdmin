@@ -5,7 +5,7 @@ export function middleware(req: NextRequest) {
   const pathname = url.pathname;
 
   // Define protected and restricted routes
-  const protectedRoutes = ["/admin/dashboard"];
+  const protectedRoutes = ["/admin/dashboard","/admin/dashboard/users","/admin/dashboard/products","/admin/dashboard/orders"];
   const restrictedRoutes = ["/login", "/register"];
 
   // Check if the request matches a protected or restricted route
