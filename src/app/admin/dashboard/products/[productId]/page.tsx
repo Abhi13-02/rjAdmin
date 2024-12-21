@@ -3,27 +3,40 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+interface SizeStock {
+  size: string;
+  stock: number;
+}
+
 interface Product {
   title: string;
   description: string;
-  category: string;
   images: string[];
+  category: string;
   tags: string[];
-  sizes: string[];
-  colors: string[];
-  stock: number;
+  sizes: SizeStock[]; // Updated to include stock for each size
   price: number;
   discountedPrice?: number;
 }
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product>({
+    title: "",
+    description: "",
+    images: [],
+    category: "",
+    tags: [],
+    sizes: [],
+    price: 0,
+    discountedPrice: 0,
+  });
+  const [newSize, setNewSize] = useState<string>("");
+  const [newStock, setNewStock] = useState<number>(0);
 
-  const categories = ["Saree", "Kurti", "Shirt", "Salwar"];
+  const categories = ["Saree", "Kurti", "Shirt", "Salwar", "Dupatta"];
   const tagOptions = ["New Arrival", "Best Seller", "Trending", "Discounted"];
-  const sizeOptions = ["XS", "S", "M", "L", "XL"];
-  const colorOptions = ["Red", "Blue", "Green", "Black", "White"];
+  const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "FREE-SIZE"];
 
   useEffect(() => {
     if (productId) {
@@ -56,22 +69,18 @@ const ProductDetailPage = () => {
   };
 
 
-  const removeTag = (tagToRemove: string) => {
-    setProduct((prevProduct) =>
-      prevProduct ? { ...prevProduct, tags: prevProduct.tags.filter((tag) => tag !== tagToRemove) } : null
-    );
+  const removeTag = (tag: string) => {
+    setProduct((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tag),
+    }));
   };
 
-  const removeSize = (sizeToRemove: string) => {
-    setProduct((prevProduct) =>
-      prevProduct ? { ...prevProduct, sizes: prevProduct.sizes.filter((size) => size !== sizeToRemove) } : null
-    );
-  };
-
-  const removeColor = (colorToRemove: string) => {
-    setProduct((prevProduct) =>
-      prevProduct ? { ...prevProduct, colors: prevProduct.colors.filter((color) => color !== colorToRemove) } : null
-    );
+  const removeSize = (size: string) => {
+    setProduct((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((s) => s.size !== size),
+    }));
   };
 
   return (
@@ -80,6 +89,7 @@ const ProductDetailPage = () => {
         <div className="p-6 bg-white rounded-lg shadow-md">
           <h1 className="text-2xl font-semibold mb-4">Edit Product</h1>
           <form onSubmit={handleUpdateProduct}>
+
             {/* Product Name */}
             <div className="mb-4">
               <label className="block font-medium text-gray-700">Product Name</label>
@@ -127,9 +137,10 @@ const ProductDetailPage = () => {
                 onChange={(e) => {
                   const newTag = e.target.value;
                   if (newTag && !product.tags.includes(newTag)) {
-                    setProduct((prev) =>
-                      prev ? { ...prev, tags: [...prev.tags, newTag] } : null
-                    );
+                    setProduct((prev) => ({
+                      ...prev,
+                      tags: [...prev.tags, newTag],
+                    }));
                   }
                 }}
                 className="w-full p-2 border rounded-md"
@@ -160,100 +171,69 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
+            {/* Sizes and Stock */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Sizes</label>
+            <label className="block font-medium text-gray-700">Sizes</label>
+            <div className="flex gap-2">
               <select
-                value=""
-                onChange={(e) => {
-                  const newSize = e.target.value;
-                  if (newSize && !product.sizes.includes(newSize)) {
-                    setProduct((prev) =>
-                      prev ? { ...prev, sizes: [...prev.sizes, newSize] } : null
-                    );
-                  }
-                }}
-                className="w-full p-2 border rounded-md"
+                value={newSize}
+                onChange={(e) => setNewSize(e.target.value)}
+                className="w-1/2 p-2 border rounded-md"
               >
-                <option value="">Select size</option>
+                <option value="">Select Size</option>
                 {sizeOptions.map((size) => (
                   <option key={size} value={size}>
                     {size}
                   </option>
                 ))}
               </select>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {product.sizes.map((size, index) => (
-                  <span
-                    key={index}
-                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
-                  >
-                    {size}
-                    <button
-                      type="button"
-                      onClick={() => removeSize(size)}
-                      className="text-red-500"
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <label className="block font-medium text-gray-700">Colors</label>
-              <select
-                value=""
-                onChange={(e) => {
-                  const newColor = e.target.value;
-                  if (newColor && !product.colors.includes(newColor)) {
-                    setProduct((prev) =>
-                      prev ? { ...prev, colors: [...prev.colors, newColor] } : null
-                    );
+              <input
+                type="number"
+                placeholder="Stock"
+                value={newStock}
+                onChange={(e) => setNewStock(parseInt(e.target.value))}
+                className="w-1/2 p-2 border rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (newSize && newStock > 0) {
+                    setProduct((prev) => ({
+                      ...prev,
+                      sizes: [...prev.sizes, { size: newSize, stock: newStock }],
+                    }));
+                    setNewSize("");
+                    setNewStock(0);
                   }
                 }}
-                className="w-full p-2 border rounded-md"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
               >
-                <option value="">Select color</option>
-                {colorOptions.map((color) => (
-                  <option key={color} value={color}>
-                    {color}
-                  </option>
-                ))}
-              </select>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {product.colors.map((color, index) => (
-                  <span
-                    key={index}
-                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
-                  >
-                    {color}
-                    <button
-                      type="button"
-                      onClick={() => removeColor(color)}
-                      className="text-red-500"
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
+                Add
+              </button>
             </div>
-
-                      {/* Stock */}
-          <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Product Stock
-            </label>
-            <input
-              type="number"
-              value={product.stock}
-              onChange={(e) =>
-                setProduct({ ...product, stock: parseInt(e.target.value) })
-              }
-              className="w-full p-2 border rounded-md"
-            />
+            <div className="flex flex-wrap gap-2 mt-2">
+              {product.sizes.map((s, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                >
+                  {s.size} (Stock: {s.stock})
+                  <button
+                    type="button"
+                    onClick={() => removeSize(s.size)}
+                    className="text-red-500"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
           </div>
+
+  
+
+          
+        
 
           {/* Price */}
           <div className="mb-4">

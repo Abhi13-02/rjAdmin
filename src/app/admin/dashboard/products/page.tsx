@@ -3,14 +3,18 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
+interface Size {
+  size: string;
+  stock: number;
+}
+
 interface Product {
   _id: string;
   title: string;
   images: string[];
   tags: string[];
-  sizes: string[];
-  colors: string[];
-  stock: number;
+  sizes: Size[]; // Sizes now include stock information
+  stock: number; // Total stock
   price: number;
   discountedPrice?: number;
 }
@@ -21,7 +25,7 @@ const ProductsPage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch("/api/products/getAllProducts"); // Replace with your API route
+      const response = await fetch("/api/products/getAllProducts");
       const data = await response.json();
       setProducts(data);
     };
@@ -88,7 +92,6 @@ const ProductsPage = () => {
               <th className="px-4 py-3">Images</th>
               <th className="px-4 py-3">Tags</th>
               <th className="px-4 py-3">Sizes</th>
-              <th className="px-4 py-3">Colors</th>
               <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Price</th>
               <th className="px-4 py-3">Discounted Price</th>
@@ -115,11 +118,18 @@ const ProductsPage = () => {
                   </div>
                 </td>
                 <td className="px-4 py-3">{product.tags.join(", ")}</td>
-                <td className="px-4 py-3">{product.sizes.join(", ")}</td>
-                <td className="px-4 py-3">{product.colors.join(", ")}</td>
+                <td className="px-4 py-3">
+                  {product.sizes
+                    .map((size) => `${size.size} (${size.stock})`)
+                    .join(", ")}
+                </td>
                 <td className="px-4 py-3">{product.stock}</td>
                 <td className="px-4 py-3">${product.price.toFixed(2)}</td>
-                <td className="px-4 py-3">${product.discountedPrice?.toFixed(2)}</td>
+                <td className="px-4 py-3">
+                  {product.discountedPrice
+                    ? `$${product.discountedPrice.toFixed(2)}`
+                    : "N/A"}
+                </td>
                 <td className="px-4 py-3 flex space-x-2">
                   <Link
                     href={`/admin/dashboard/products/${product._id}`}

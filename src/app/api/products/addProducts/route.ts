@@ -1,4 +1,3 @@
-
 import dbConnect from "@/libs/dbconnect";
 import Products from "@/models/Products";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,11 +13,11 @@ export async function POST(request: NextRequest) {
       category,
       discountedPrice,
       tags,
-      sizes,
-      colors,
-      stock,
+      sizes, // Sizes now include stock information
       images,
     } = body;
+
+
     const newProduct = await Products.create({
       title,
       description,
@@ -26,9 +25,7 @@ export async function POST(request: NextRequest) {
       category,
       tags,
       discountedPrice,
-      sizes,
-      colors,
-      stock,
+      sizes, // Store sizes with their stock in the database
       images,
     });
 
@@ -43,9 +40,9 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
-    console.error("Error generating presigned URL:", error);
+    console.error("Error adding product:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to generate upload URL" },
+      { success: false, error: "Failed to add product" },
       { status: 500 }
     );
   }
