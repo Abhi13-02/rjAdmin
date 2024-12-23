@@ -1,11 +1,9 @@
-"use client";
+'use client';
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-
 export default function LoginPage() {
-
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
@@ -26,7 +24,6 @@ export default function LoginPage() {
     const data = await res.json();
     if (res.ok) {
       alert(data.message);
-      // Redirect to dashboard or save session
       router.push("/admin/dashboard");
     } else {
       alert(data.error);
@@ -34,11 +31,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
-        <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-          Login
-        </h1>
+    <div className="flex flex-col items-center min-h-screen justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-5">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h1 className="text-2xl font-semibold mb-6 text-center">Login</h1>
         <div className="space-y-4">
           <input
             type="email"
@@ -46,7 +41,7 @@ export default function LoginPage() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring focus:ring-blue-400 dark:focus:ring-blue-600 outline-none"
           />
           <input
             type="password"
@@ -54,15 +49,24 @@ export default function LoginPage() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring focus:ring-blue-400 dark:focus:ring-blue-600 outline-none"
           />
-          <button
-            onClick={handleLogin}
-            className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Login
-          </button>
         </div>
+        <button
+          onClick={handleLogin}
+          className="mt-6 w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded focus:ring focus:ring-blue-400 dark:focus:ring-blue-800 focus:outline-none"
+        >
+          Login
+        </button>
+        <p className="mt-4 text-sm text-center text-gray-700 dark:text-gray-300">
+          Don't have an account?{" "}
+          <a
+            href="/register"
+            className="text-blue-500 dark:text-blue-400 hover:underline"
+          >
+            Register here
+          </a>
+        </p>
       </div>
     </div>
   );

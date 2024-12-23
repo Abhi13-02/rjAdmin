@@ -43,7 +43,7 @@ const ProductsPage = () => {
         });
 
         if (response.ok) {
-          alert("Product deleted successfully");
+          // alert("Product deleted successfully");
           setProducts((prevProducts) =>
             prevProducts.filter((product) => product._id !== productId)
           );

@@ -13,7 +13,7 @@ interface Product {
   images: string[];
   category: string;
   tags: string[];
-  sizes: SizeStock[]; // Updated to include stock for each size
+  sizes: SizeStock[];
   price: number;
   discountedPrice?: number;
 }
@@ -42,50 +42,25 @@ const AddProductPage = () => {
 
   const handleAddProduct = async (event: React.FormEvent) => {
     event.preventDefault();
-
     try {
       setUploading(true);
-
-      // Prepare presigned URL uploads
       const publicUrls: string[] = [];
       for (const file of files) {
         const presignedUrlResponse = await fetch("/api/upload", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            filename: file.name,
-            contentType: file.type,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filename: file.name, contentType: file.type }),
         });
-
         const { presignedUrl, publicUrl } = await presignedUrlResponse.json();
-
-        // Upload the file to the presigned URL
-        await fetch(presignedUrl, {
-          method: "PUT",
-          body: file,
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
-
+        await fetch(presignedUrl, { method: "PUT", body: file });
         publicUrls.push(publicUrl);
       }
-
-      // Update product's images with uploaded URLs
       const updatedProduct = { ...product, images: publicUrls };
-
-      // Submit product to API
       const response = await fetch("/api/products/addProducts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedProduct),
       });
-
       if (response.ok) {
         alert("Product added successfully");
         setProduct({
@@ -101,7 +76,7 @@ const AddProductPage = () => {
         alert("Failed to add product. Please try again.");
       }
     } catch (err) {
-      console.error("Error uploading images or adding product:", err);
+      console.error(err);
       setError("An error occurred while uploading images. Please try again.");
     } finally {
       setUploading(false);
@@ -110,57 +85,49 @@ const AddProductPage = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      setFiles(filesArray);
+      setFiles(Array.from(e.target.files));
     }
   };
 
-  const removeTag = (tag: string) => {
+  const removeTag = (tag: string) =>
     setProduct((prev) => ({
       ...prev,
       tags: prev.tags.filter((t) => t !== tag),
     }));
-  };
 
-  const removeSize = (size: string) => {
+  const removeSize = (size: string) =>
     setProduct((prev) => ({
       ...prev,
       sizes: prev.sizes.filter((s) => s.size !== size),
     }));
-  };
 
   return (
-    <div className="w-full">
-      <div className="p-6 bg-white rounded-lg shadow-md">
+    <div className="w-full p-6">
+      <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-6 rounded-lg shadow-md">
         <h1 className="text-2xl font-semibold mb-4">Add New Product</h1>
         <form onSubmit={handleAddProduct}>
-
-          {/* Basic Product name */}
+          {/* Product Name */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Product Name
-            </label>
+            <label className="block font-medium">Product Name</label>
             <input
               type="text"
               value={product.title}
               onChange={(e) =>
                 setProduct({ ...product, title: e.target.value })
               }
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             />
           </div>
 
-          {/* Product Category */}
+          {/* Category */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Product Category
-            </label>
+            <label className="block font-medium">Category</label>
             <select
               value={product.category}
               onChange={(e) =>
                 setProduct({ ...product, category: e.target.value })
               }
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             >
               <option value="">Select Category</option>
               {categories.map((category) => (
@@ -171,35 +138,33 @@ const AddProductPage = () => {
             </select>
           </div>
 
-          {/* Product Description */}
+          {/* Description */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Product Description
-            </label>
+            <label className="block font-medium">Description</label>
             <textarea
               value={product.description}
               onChange={(e) =>
                 setProduct({ ...product, description: e.target.value })
               }
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             />
           </div>
 
           {/* Images */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">Images</label>
+            <label className="block font-medium">Images</label>
             <input
               type="file"
               multiple
               onChange={handleFileChange}
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             />
             <div className="mt-2 flex gap-2">
               {files.map((image, index) => (
                 <img
                   key={index}
                   src={URL.createObjectURL(image)}
-                  alt={`Product Image ${index}`}
+                  alt={`Image ${index}`}
                   className="w-16 h-16 object-cover rounded"
                 />
               ))}
@@ -208,7 +173,7 @@ const AddProductPage = () => {
 
           {/* Tags */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">Tags</label>
+            <label className="block font-medium">Tags</label>
             <select
               value=""
               onChange={(e) => {
@@ -220,7 +185,7 @@ const AddProductPage = () => {
                   }));
                 }
               }}
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             >
               <option value="">Select Tag</option>
               {tagOptions.map((tag) => (
@@ -229,12 +194,11 @@ const AddProductPage = () => {
                 </option>
               ))}
             </select>
-
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {product.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                  className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 py-1 px-3 rounded-full flex items-center gap-2"
                 >
                   {tag}
                   <button
@@ -249,14 +213,14 @@ const AddProductPage = () => {
             </div>
           </div>
 
-          {/* Sizes and Stock */}
+          {/* Sizes */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">Sizes</label>
+            <label className="block font-medium">Sizes</label>
             <div className="flex gap-2">
               <select
                 value={newSize}
                 onChange={(e) => setNewSize(e.target.value)}
-                className="w-1/2 p-2 border rounded-md"
+                className="w-1/2 p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
               >
                 <option value="">Select Size</option>
                 {sizeOptions.map((size) => (
@@ -270,7 +234,7 @@ const AddProductPage = () => {
                 placeholder="Stock"
                 value={newStock}
                 onChange={(e) => setNewStock(parseInt(e.target.value))}
-                className="w-1/2 p-2 border rounded-md"
+                className="w-1/2 p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
               />
               <button
                 type="button"
@@ -289,11 +253,11 @@ const AddProductPage = () => {
                 Add
               </button>
             </div>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {product.sizes.map((s, index) => (
                 <span
                   key={index}
-                  className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                  className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 py-1 px-3 rounded-full flex items-center gap-2"
                 >
                   {s.size} (Stock: {s.stock})
                   <button
@@ -310,22 +274,20 @@ const AddProductPage = () => {
 
           {/* Price */}
           <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Product Price
-            </label>
+            <label className="block font-medium">Price</label>
             <input
               type="number"
               value={product.price}
               onChange={(e) =>
                 setProduct({ ...product, price: parseInt(e.target.value) })
               }
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             />
           </div>
 
           {/*Discounted Price */}
-          <div className="mb-4">
-            <label className="block font-medium text-gray-700">
+            <div className="mb-4">
+            <label className="block font-medium ">
               Discount Price
             </label>
             <input
@@ -337,22 +299,26 @@ const AddProductPage = () => {
                   discountedPrice: parseInt(e.target.value),
                 })
               }
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
             />
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={uploading}
-            className={`px-4 py-2 rounded-md text-white ${
-              uploading ? "bg-gray-400" : "bg-blue-600"
-            }`}
-          >
-            {uploading ? "Uploading..." : "Add Product"}
-          </button>
+
+          <div>
+            <button
+              type="submit"
+              disabled={uploading}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
+            >
+              {uploading ? "Uploading..." : "Add Product"}
+            </button>
+          </div>
         </form>
-        {error && <div className="mt-4 text-red-500">{error}</div>}
+        {error && (
+          <div className="mt-4 text-red-500 bg-red-100 dark:bg-red-800 p-3 rounded">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
