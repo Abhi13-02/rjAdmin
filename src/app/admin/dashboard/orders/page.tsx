@@ -1,146 +1,90 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-interface Item {
+interface OrderItem {
+  productId: string;
   name: string;
-  quantity: number;
   price: number;
-  color: string;
+  quantity: number;
+  size: string;
+  images: string[];
 }
 
 interface Order {
   _id: string;
-  status: string;
+  userId: string;
+  items: OrderItem[];
   totalAmount: number;
+  shippingAddress: any; // Replace with a specific type if available
+  status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
+  paymentMethod: 'COD' | 'Prepaid';
   createdAt: string;
-  items: Item[];
-  newStatus?: string; // For tracking the updated status
+  updatedAt: string;
 }
-
-const STATUS_OPTIONS = ["pending", "shipped", "delivered", "cancelled"];
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [activeTab, setActiveTab] = useState("pending");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch all orders
   useEffect(() => {
     const fetchOrders = async () => {
-      const response = await fetch(`/api/orders/all`); // Adjust API route
-      const data = await response.json();
-      setOrders(data);
+      try {
+        const response = await axios.get('/api/orders/all');
+        setOrders(response.data);
+      } catch (error: any) {
+        setError(error.response?.data?.error || 'Failed to fetch orders');
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchOrders();
   }, []);
 
-  // Handle status change in dropdown
-  const handleStatusChange = (_id: string, newStatus: string) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order._id === _id ? { ...order, newStatus } : order
-      )
-    );
-  };
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading orders...</div>;
+  }
 
-  // Update order status
-  const handleUpdateStatus = async (_id: string, newStatus: string) => {
-    try {      
-      const response = await fetch(`/api/orders/updateStatus`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({orderId:_id, newStatus }),
-      });
+  if (error) {
+    return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
+  }
 
-      if (response.ok) {
-        alert("Order status updated successfully.");
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === _id ? { ...order, status: newStatus } : order
-          )
-        );
-      } else {
-        alert("Failed to update order status.");
-      }
-    } catch (error) {
-      console.error("Error updating order status:", error);
-      alert("An error occurred while updating the status.");
-    }
-  };
-
-  // Filter orders by active tab status
-  const filteredOrders = orders.filter((order) => order.status === activeTab);
-  
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">All Orders</h1>
-
-      {/* Tabs */}
-      <div className="tabs mb-4 w-full flex justify-around gap-2 items-center">
-        {STATUS_OPTIONS.map((status) => (
-          <button
-            key={status}
-            onClick={() => setActiveTab(status)}
-            className={`tab px-4 py-2 ${
-              activeTab === status ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Orders List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {filteredOrders.length > 0 ? (
-        
-        filteredOrders.map((order: Order) => (
-          <div key={order._id} className="border p-4 mb-4 rounded-lg shadow">
-            <h3 className="font-bold text-lg">Order ID: {order._id}</h3>
-            <p>Status: {order.status}</p>
-            <p>Total Amount: ${order.totalAmount}</p>
-            <p>Created At: {new Date(order.createdAt).toLocaleDateString()}</p>
-            <ul>
-              {order.items.map((item, index) => (
-                <li key={index}>
-                  {item.name} - {item.quantity} pcs - ${item.price} - {item.color}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-2">
-              <select
-                value={order.newStatus || order.status}
-                onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                className="border p-2 rounded"
-              >
-                {STATUS_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={() =>
-                  handleUpdateStatus(order._id, order.newStatus || order.status)
-                }
-                className={`ml-2 px-4 py-2 rounded text-white ${
-                  order.newStatus && order.newStatus !== order.status
-                    ? "bg-blue-500 hover:bg-blue-600"
-                    : "bg-gray-300 cursor-not-allowed"
-                }`}
-                disabled={!order.newStatus || order.newStatus === order.status}
-              >
-                Update
-              </button>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p>No orders with status: {activeTab}</p>
-      )}
-      </div>  
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Orders</h1>
+      <table className="min-w-full border-collapse border border-gray-300">
+        <thead>
+          <tr>
+            <th className="border border-gray-300 px-4 py-2">Order ID</th>
+            <th className="border border-gray-300 px-4 py-2">User ID</th>
+            <th className="border border-gray-300 px-4 py-2">Total Amount</th>
+            <th className="border border-gray-300 px-4 py-2">Status</th>
+            <th className="border border-gray-300 px-4 py-2">Payment Method</th>
+            <th className="border border-gray-300 px-4 py-2">Created At</th>
+            <th className="border border-gray-300 px-4 py-2">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order) => (
+            <tr key={order._id}>
+              <td className="border border-gray-300 px-4 py-2">{order._id}</td>
+              <td className="border border-gray-300 px-4 py-2">{order.userId}</td>
+              <td className="border border-gray-300 px-4 py-2">₹{order.totalAmount}</td>
+              <td className="border border-gray-300 px-4 py-2">{order.status}</td>
+              <td className="border border-gray-300 px-4 py-2">{order.paymentMethod}</td>
+              <td className="border border-gray-300 px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td>
+              <td className="border border-gray-300 px-4 py-2">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                  View
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
