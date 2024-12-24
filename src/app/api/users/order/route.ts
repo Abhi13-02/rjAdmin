@@ -25,7 +25,8 @@ export async function GET(req: Request) {
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        color: item.color,
+        size: item.size,
+        images: item.images
       })),
       totalAmount: order.totalAmount,
       status: order.status,
