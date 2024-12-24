@@ -14,7 +14,7 @@ interface Product {
   images: string[];
   category: string;
   tags: string[];
-  sizes: SizeStock[]; // Updated to include stock for each size
+  sizes: SizeStock[];
   price: number;
   discountedPrice?: number;
 }
@@ -68,7 +68,6 @@ const ProductDetailPage = () => {
     }
   };
 
-
   const removeTag = (tag: string) => {
     setProduct((prev) => ({
       ...prev,
@@ -84,41 +83,54 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       {product ? (
-        <div className="p-6 bg-white rounded-lg shadow-md">
-          <h1 className="text-2xl font-semibold mb-4">Edit Product</h1>
+        <div>
+          <h1 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Edit Product
+          </h1>
           <form onSubmit={handleUpdateProduct}>
-
             {/* Product Name */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Product Name</label>
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Product Name
+              </label>
               <input
                 type="text"
                 value={product.title}
-                onChange={(e) => setProduct({ ...product, title: e.target.value })}
-                className="w-full p-2 border rounded-md"
+                onChange={(e) =>
+                  setProduct({ ...product, title: e.target.value })
+                }
+                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
 
             {/* Product Description */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Product Description</label>
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Product Description
+              </label>
               <input
                 type="text"
                 value={product.description}
-                onChange={(e) => setProduct({ ...product, description: e.target.value })}
-                className="w-full p-2 border rounded-md"
+                onChange={(e) =>
+                  setProduct({ ...product, description: e.target.value })
+                }
+                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
 
             {/* Product Category */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Product Category</label>
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Product Category
+              </label>
               <select
                 value={product.category}
-                onChange={(e) => setProduct({ ...product, category: e.target.value })}
-                className="w-full p-2 border rounded-md"
+                onChange={(e) =>
+                  setProduct({ ...product, category: e.target.value })
+                }
+                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">Select Category</option>
                 {categories.map((category) => (
@@ -131,7 +143,9 @@ const ProductDetailPage = () => {
 
             {/* Tags */}
             <div className="mb-4">
-              <label className="block font-medium text-gray-700">Tags</label>
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Tags
+              </label>
               <select
                 value=""
                 onChange={(e) => {
@@ -143,7 +157,7 @@ const ProductDetailPage = () => {
                     }));
                   }
                 }}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">Select Tag</option>
                 {tagOptions.map((tag) => (
@@ -156,7 +170,7 @@ const ProductDetailPage = () => {
                 {product.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
+                    className="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded-full flex items-center gap-2"
                   >
                     {tag}
                     <button
@@ -173,108 +187,105 @@ const ProductDetailPage = () => {
 
             {/* Sizes and Stock */}
             <div className="mb-4">
-            <label className="block font-medium text-gray-700">Sizes</label>
-            <div className="flex gap-2">
-              <select
-                value={newSize}
-                onChange={(e) => setNewSize(e.target.value)}
-                className="w-1/2 p-2 border rounded-md"
-              >
-                <option value="">Select Size</option>
-                {sizeOptions.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Sizes
+              </label>
+              <div className="flex gap-2">
+                <select
+                  value={newSize}
+                  onChange={(e) => setNewSize(e.target.value)}
+                  className="w-1/2 p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  <option value="">Select Size</option>
+                  {sizeOptions.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  placeholder="Stock"
+                  value={newStock}
+                  onChange={(e) => setNewStock(parseInt(e.target.value))}
+                  className="w-1/2 p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (newSize && newStock > 0) {
+                      setProduct((prev) => ({
+                        ...prev,
+                        sizes: [...prev.sizes, { size: newSize, stock: newStock }],
+                      }));
+                      setNewSize("");
+                      setNewStock(0);
+                    }
+                  }}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {product.sizes.map((s, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded-full flex items-center gap-2"
+                  >
+                    {s.size} (Stock: {s.stock})
+                    <button
+                      type="button"
+                      onClick={() => removeSize(s.size)}
+                      className="text-red-500"
+                    >
+                      &times;
+                    </button>
+                  </span>
                 ))}
-              </select>
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="mb-4">
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Product Price
+              </label>
               <input
                 type="number"
-                placeholder="Stock"
-                value={newStock}
-                onChange={(e) => setNewStock(parseInt(e.target.value))}
-                className="w-1/2 p-2 border rounded-md"
+                value={product.price}
+                onChange={(e) =>
+                  setProduct({ ...product, price: parseInt(e.target.value) })
+                }
+                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
-              <button
-                type="button"
-                onClick={() => {
-                  if (newSize && newStock > 0) {
-                    setProduct((prev) => ({
-                      ...prev,
-                      sizes: [...prev.sizes, { size: newSize, stock: newStock }],
-                    }));
-                    setNewSize("");
-                    setNewStock(0);
-                  }
-                }}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Add
-              </button>
             </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {product.sizes.map((s, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full flex items-center gap-2"
-                >
-                  {s.size} (Stock: {s.stock})
-                  <button
-                    type="button"
-                    onClick={() => removeSize(s.size)}
-                    className="text-red-500"
-                  >
-                    &times;
-                  </button>
-                </span>
-              ))}
+
+            {/* Discounted Price */}
+            <div className="mb-4">
+              <label className="block font-medium text-gray-700 dark:text-gray-300">
+                Discount Price
+              </label>
+              <input
+                type="number"
+                value={product.discountedPrice}
+                onChange={(e) =>
+                  setProduct({ ...product, discountedPrice: parseInt(e.target.value) })
+                }
+                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
             </div>
-          </div>
-
-  
-
-          
-        
-
-          {/* Price */}
-          <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Product Price
-            </label>
-            <input
-              type="number"
-              value={product.price}
-              onChange={(e) =>
-                setProduct({ ...product, price: parseInt(e.target.value) })
-              }
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-
-          {/*Discounted Price */}
-          <div className="mb-4">
-            <label className="block font-medium text-gray-700">
-              Discount Price
-            </label>
-            <input
-              type="number"
-              value={product.discountedPrice}
-              onChange={(e) =>
-                setProduct({ ...product, discountedPrice: parseInt(e.target.value) })
-              }
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
 
             <button
               type="submit"
-              className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
             >
               Update Product
             </button>
           </form>
         </div>
       ) : (
-        <p>Loading product details...</p>
+        <p className="text-gray-900 dark:text-gray-100">Loading product details...</p>
       )}
     </div>
   );
