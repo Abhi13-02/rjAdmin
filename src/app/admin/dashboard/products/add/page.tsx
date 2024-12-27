@@ -36,12 +36,17 @@ const AddProductPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
 
-  const categories = ["Saree", "Kurti", "Shirt", "Salwar", "Dupatta"];
-  const tagOptions = ["New Arrival", "Best Seller", "Trending", "Discounted"];
-  const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "FREE-SIZE"];
+  const categories = ["SAREE", "LENGHA", "SALWAR & KAMEEZ", "KURTI", "DUPATTA"];
+  const tagOptions = ["Most Loved", "Banarsi Saree", "Ghatchola Saree","Georgette", "Dola Silk Lehenga","Kota Doirya Lehenga","Art Silk Lehenga"];
+  const colorOptions = ["Multicolor", "Black", "Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink","White", "Grey", "Brown"];
+  const sizeOptions = ["S", "M", "L", "XL", "XXL", "FREE-SIZE"];
 
   const handleAddProduct = async (event: React.FormEvent) => {
     event.preventDefault();
+    if(files.length === 0 || product.title === "" || product.description === "" || product.category === "" || product.tags.length === 0 || product.sizes.length === 0 || product.price === 0 ){
+      alert("Please fill in all the required fields."); 
+      return;
+    }
     try {
       setUploading(true);
       const publicUrls: string[] = [];
@@ -72,6 +77,7 @@ const AddProductPage = () => {
           sizes: [],
           price: 0,
         });
+        setFiles([]);
       } else {
         alert("Failed to add product. Please try again.");
       }
@@ -189,6 +195,48 @@ const AddProductPage = () => {
             >
               <option value="">Select Tag</option>
               {tagOptions.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {product.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 py-1 px-3 rounded-full flex items-center gap-2"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="text-red-500"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Colors */}
+          <div className="mb-4">
+            <label className="block font-medium">Colors</label>
+            <select
+              value=""
+              onChange={(e) => {
+                const newTag = e.target.value;
+                if (newTag && !product.tags.includes(newTag)) {
+                  setProduct((prev) => ({
+                    ...prev,
+                    tags: [...prev.tags, newTag],
+                  }));
+                }
+              }}
+              className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+            >
+              <option value="">Select Colors</option>
+              {colorOptions.map((tag) => (
                 <option key={tag} value={tag}>
                   {tag}
                 </option>
