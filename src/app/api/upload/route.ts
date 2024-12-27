@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       success: true,
       presignedUrl,
       key,
-      publicUrl: `https://pub-0d09e9dbdb334949bc64fece4edb6ce5.r2.dev/${key}`,
+      publicUrl: `https://rjtraditional.com/${key}`,
     });
   } catch (error) {
     console.error('Error generating presigned URL:', error);
