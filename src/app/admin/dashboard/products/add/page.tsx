@@ -287,7 +287,7 @@ const AddProductPage = () => {
               <button
                 type="button"
                 onClick={() => {
-                  if (newSize && newStock > 0) {
+                  if (newSize && newStock > 0 && !product.sizes.some((s) => s.size === newSize)) {
                     setProduct((prev) => ({
                       ...prev,
                       sizes: [...prev.sizes, { size: newSize, stock: newStock }],
