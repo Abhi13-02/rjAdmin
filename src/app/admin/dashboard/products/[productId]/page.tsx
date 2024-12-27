@@ -35,7 +35,7 @@ const ProductDetailPage = () => {
   const [newStock, setNewStock] = useState<number>(0);
 
 
-  const categories = ["Saree", "Kurti", "Shirt", "Salwar", "Dupatta"];
+  const categories = ["SAREE", "LEHENGA", "SUITS", "KURTI", "DUPATTA"];
   const tagOptions = ["Most Loved", "Banarsi Saree", "Ghatchola Saree","Georgette", "Dola Silk Lehenga","Kota Doirya Lehenga","Art Silk Lehenga"];
   const colorOptions = ["Multicolor", "Black", "Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink","White", "Grey", "Brown"];
   const sizeOptions = ["S", "M", "L", "XL", "XXL", "FREE-SIZE"];
