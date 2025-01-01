@@ -48,7 +48,6 @@ const UsersPage = () => {
             <thead>
               <tr className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                 <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left">Address</th>
                 <th className="px-6 py-3 text-left">Orders</th>
                 <th className="px-6 py-3 text-left">Actions</th>
               </tr>
@@ -60,7 +59,6 @@ const UsersPage = () => {
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
                 >
                   <td className="px-6 py-4 border-t text-gray-900 dark:text-gray-100">{user.name}</td>
-                  <td className="px-6 py-4 border-t text-gray-900 dark:text-gray-100">{user.address}</td>
                   <td className="px-6 py-4 border-t text-gray-900 dark:text-gray-100">{user.orderCount}</td>
                   <td className="px-6 py-4 border-t text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-500">
                     <Link href={`/admin/dashboard/users/${user.userId}`}>

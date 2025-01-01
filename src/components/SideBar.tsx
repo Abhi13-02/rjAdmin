@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const Sidebar = () => {
   const pathname = usePathname(); // Get the current pathname
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const links = [
     { href: "/admin/dashboard/users", label: "Users" },
@@ -24,31 +24,50 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-white p-3 rounded-md shadow-lg"
-      >
-        {isSidebarOpen ? (
-          <span>Close Menu</span>
-        ) : (
-          <span>Open Menu</span>
-        )}
-      </button>
+      {/* Sidebar for large screens */}
+      <aside className="hidden sm:flex sm:flex-col sm:w-64 sm:h-screen sm:bg-gray-800 sm:text-white sm:shadow-lg sm:p-6">
+        <ul className="space-y-6 flex-grow">
+          {links.map(({ href, label }) => (
+            <li
+              key={href}
+              className={`p-3 rounded-md transition-all duration-200 ${
+                pathname === href ? "bg-blue-600" : "hover:bg-gray-700"
+              }`}
+            >
+              <Link href={href} className="block text-lg">
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
 
-      {/* Collapsible Sidebar */}
-      <aside
-        className={`fixed bottom-0 left-0 w-full bg-gray-800 text-white p-4 z-40 transform transition-transform duration-300 ${
-          isSidebarOpen ? "translate-y-0" : "translate-y-full"
-        }`}
-      >
-        <div className="flex flex-col items-center">
-          {/* Sidebar Links */}
-          <ul className="space-y-4 w-full">
+        <button
+          className="bg-red-600 hover:bg-red-500 text-white mt-6 p-3 rounded-md w-full"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </aside>
+
+      {/* Collapsible dropdown for smaller screens */}
+      <div className="sm:hidden fixed bottom-0 w-full bg-gray-800 text-white shadow-lg">
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          className="w-full text-center p-4 bg-gray-900"
+        >
+          {isDropdownOpen ? "Close Menu" : "Open Menu"}
+        </button>
+
+        <div
+          className={`transition-all duration-300 overflow-hidden ${
+            isDropdownOpen ? "max-h-screen" : "max-h-0"
+          }`}
+        >
+          <ul className="space-y-6 p-4">
             {links.map(({ href, label }) => (
               <li
                 key={href}
-                className={`p-3 rounded-md text-center transition-all duration-200 ${
+                className={`p-3 rounded-md transition-all duration-200 ${
                   pathname === href ? "bg-blue-600" : "hover:bg-gray-700"
                 }`}
               >
@@ -59,15 +78,14 @@ const Sidebar = () => {
             ))}
           </ul>
 
-          {/* Logout Button */}
           <button
-            className="bg-red-600 hover:bg-red-500 text-white mt-4 p-3 rounded-md w-full"
+            className="bg-red-600 hover:bg-red-500 text-white mt-6 p-3 rounded-md w-full"
             onClick={handleLogout}
           >
             Logout
           </button>
         </div>
-      </aside>
+      </div>
     </>
   );
 };
