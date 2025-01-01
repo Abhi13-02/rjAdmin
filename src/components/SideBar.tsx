@@ -55,7 +55,7 @@ const Sidebar = () => {
       <div className="sm:hidden fixed bottom-0 w-full bg-gray-800 text-white shadow-lg">
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="w-full text-center p-4 bg-gray-900"
+          className="w-full text-center p-4 bg-yellow-600 hover:bg-yellow-500"
         >
           {isDropdownOpen ? "Close Menu" : "Open Menu"}
         </button>
