@@ -14,7 +14,7 @@ const Sidebar = () => {
     { href: "/admin/dashboard/orders", label: "Orders" },
   ];
 
-  const normalizePath = (path: string) => path.replace(/\/$/, ""); // Remove trailing slash
+  const normalizePath = (path : any) => path.replace(/\/$/, ""); // Remove trailing slash
 
   const handleLogout = () => {
     fetch("/api/auth/logout", { method: "POST" }) // Replace with your API route
@@ -33,7 +33,7 @@ const Sidebar = () => {
             <li
               key={href}
               className={`p-3 rounded-md transition-all duration-200 ${
-                pathname === href ? "bg-blue-600" : "hover:bg-gray-700"
+                normalizePath(pathname) === href ? "bg-blue-600" : "hover:bg-gray-700"
               }`}
             >
               <Link href={href} className="block text-lg">
@@ -70,7 +70,7 @@ const Sidebar = () => {
               <li
                 key={href}
                 className={`p-3 rounded-md transition-all duration-200 ${
-                  pathname === href ? "bg-blue-600" : "hover:bg-gray-700"
+                  normalizePath(pathname) === href ? "bg-blue-600" : "hover:bg-gray-700"
                 }`}
               >
                 <Link href={href} className="block text-lg">
