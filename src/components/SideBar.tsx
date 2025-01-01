@@ -14,6 +14,8 @@ const Sidebar = () => {
     { href: "/admin/dashboard/orders", label: "Orders" },
   ];
 
+  const normalizePath = (path: string) => path.replace(/\/$/, ""); // Remove trailing slash
+
   const handleLogout = () => {
     fetch("/api/auth/logout", { method: "POST" }) // Replace with your API route
       .then(() => {
