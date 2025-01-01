@@ -8,6 +8,7 @@ const AdminDashboard = () => {
   return (
     <div className="dashboard">
       <div className="content">
+
         <h1>Welcome dear admin</h1>
       </div>
     </div>

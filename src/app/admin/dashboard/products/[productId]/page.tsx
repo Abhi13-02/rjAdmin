@@ -90,7 +90,7 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div className="w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="w-full p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       {product ? (
         <div>
           <h1 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
