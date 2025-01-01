@@ -63,7 +63,7 @@ const ProductsPage = () => {
   );
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-4 sm:p-6">
+    <div className="min-h-screen w-full mb-20 bg-gray-100  dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-4 sm:p-6">
  
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold">Products</h1>

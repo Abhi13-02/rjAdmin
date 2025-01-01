@@ -90,7 +90,7 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div className="w-full p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="w-full p-2 mb-20 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       {product ? (
         <div>
           <h1 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
@@ -117,13 +117,13 @@ const ProductDetailPage = () => {
               <label className="block font-medium text-gray-700 dark:text-gray-300">
                 Product Description
               </label>
-              <input
-                type="text"
+              <textarea
+                rows={6}
                 value={product.description}
                 onChange={(e) =>
                   setProduct({ ...product, description: e.target.value })
                 }
-                className="w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full p-2 border  rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
 
