@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
 
 interface OrderItem {
   productId: string;
@@ -151,10 +152,12 @@ const UserOrdersPage: React.FC = () => {
                       >
                         <div className="mb-2">
                           {item.images && item.images.length > 0 && (
-                            <img
+                            <Image
+                              width={200}
+                              height={200}
                               src={item.images[0]}
                               alt={item.name}
-                              className="w-full h-32 object-cover rounded-md"
+                              className="w-full h-40 object-cover rounded-md"
                             />
                           )}
                         </div>

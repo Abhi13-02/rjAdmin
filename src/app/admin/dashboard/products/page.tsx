@@ -117,10 +117,13 @@ const ProductsPage = () => {
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-2">
                     {product.images.map((image, index) => (
-                      <img
+                      <Image
                         key={index}
                         src={image}
                         alt={`${product.title} image ${index}`}
+                        width={64}
+                        height={64}
+                        loading="lazy"
                         className="w-16 h-16 object-cover rounded-md border border-gray-300 dark:border-gray-700"
                       />
                     ))}
@@ -168,12 +171,12 @@ const ProductsPage = () => {
               <div className="flex gap-2 mt-2">
                 {product.images.map((image, index) => (
                   <Image
-                    loading="lazy"
-                    width={100}
-                    height={100}
                     key={index}
                     src={image}
                     alt={`${product.title} image ${index}`}
+                    width={64}
+                    height={64}
+                    loading="lazy"
                     className="w-16 h-16 object-cover rounded-md border"
                   />
                 ))}
