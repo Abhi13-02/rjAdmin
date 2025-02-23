@@ -157,7 +157,7 @@ const OrdersPage = () => {
                 </td>
                 <td className="border border-gray-300 px-4 py-2 flex flec-col justify-center items-center gap-2 space-x-2">
                   <button
-                    onClick={() => router.push(`users/${order.userId}`)}
+                    onClick={() => router.push(`/admin/dashboard/users/${order.userId}`)}
                     className="bg-blue-500 text-white px-4 py-2 rounded text-sm"
                   >
                     View
