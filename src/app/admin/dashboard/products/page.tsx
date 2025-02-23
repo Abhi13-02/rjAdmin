@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/SideBar";
+import Image from "next/image";
 
 interface Size {
   size: string;
@@ -18,6 +19,7 @@ interface Product {
   stock: number; // Total stock
   price: number;
   discountedPrice?: number;
+  createdAt: string; // Added createdAt property for sorting
 }
 
 const ProductsPage = () => {
@@ -28,7 +30,12 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
       const response = await fetch("/api/products/getAllProducts");
       const data = await response.json();
-      setProducts(data);
+      // Sort products so that the newest products appear first
+      const sortedProducts = data.sort(
+        (a: Product, b: Product) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setProducts(sortedProducts);
     };
 
     fetchProducts();
@@ -36,13 +43,11 @@ const ProductsPage = () => {
 
   const handleDelete = async (productId: string) => {
     const confirmed = confirm("Are you sure you want to delete this product?");
-
     if (confirmed) {
       try {
         const response = await fetch(`/api/products/${productId}`, {
           method: "DELETE",
         });
-
         if (response.ok) {
           setProducts((prevProducts) =>
             prevProducts.filter((product) => product._id !== productId)
@@ -57,14 +62,16 @@ const ProductsPage = () => {
     }
   };
 
-  // Filter products based on search query
+  // Normalize search query by lowercasing and removing spaces
+  const normalizedSearchQuery = searchQuery.toLowerCase().replace(/\s/g, "");
+
+  // Filter products based on normalized search query
   const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+    product.title.toLowerCase().replace(/\s/g, "").includes(normalizedSearchQuery)
   );
 
   return (
-    <div className="min-h-screen w-full mb-20 bg-gray-100  dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-4 sm:p-6">
- 
+    <div className="min-h-screen w-full mb-20 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold">Products</h1>
         <Link href="/admin/dashboard/products/add">
@@ -87,6 +94,7 @@ const ProductsPage = () => {
 
       {/* Responsive Table */}
       <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+        {/* Table view for larger screens */}
         <table className="table-auto w-full text-sm hidden sm:table">
           <thead>
             <tr className="text-left border-b border-gray-300 dark:border-gray-700">
@@ -94,7 +102,6 @@ const ProductsPage = () => {
               <th className="px-4 py-3">Images</th>
               <th className="px-4 py-3">Tags</th>
               <th className="px-4 py-3">Sizes</th>
-              <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Price</th>
               <th className="px-4 py-3">Discounted Price</th>
               <th className="px-4 py-3">Actions</th>
@@ -125,7 +132,6 @@ const ProductsPage = () => {
                     .map((size) => `${size.size} (${size.stock})`)
                     .join(", ")}
                 </td>
-                <td className="px-4 py-3">{product.stock}</td>
                 <td className="px-4 py-3">${product.price.toFixed(2)}</td>
                 <td className="px-4 py-3">
                   {product.discountedPrice
@@ -161,7 +167,10 @@ const ProductsPage = () => {
               <h3 className="text-lg font-bold">{product.title}</h3>
               <div className="flex gap-2 mt-2">
                 {product.images.map((image, index) => (
-                  <img
+                  <Image
+                    loading="lazy"
+                    width={100}
+                    height={100}
                     key={index}
                     src={image}
                     alt={`${product.title} image ${index}`}
@@ -176,7 +185,6 @@ const ProductsPage = () => {
                   .map((size) => `${size.size} (${size.stock})`)
                   .join(", ")}
               </p>
-              <p className="mt-1 text-sm">Stock: {product.stock}</p>
               <p className="mt-1 text-sm">Price: ${product.price.toFixed(2)}</p>
               <p className="mt-1 text-sm">
                 Discounted Price:{" "}
